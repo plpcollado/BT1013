@@ -1,0 +1,327 @@
+---
+title: "sesion-4"
+author: "Pedro Luis Pérez Collado"
+output: html_document
+date: "2023-04-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Escribe una función que genere una secuencia aleatoria de DNA de tamaño "n" utilizando solo los 4 nucleótidos: A, T, C, G
+
+```{r}
+n <- readline(prompt = "Enter size of DNA: ")
+
+generar_dna <- function(n){
+  x <- c("A", "T", "C", "G")
+  dna <- sample(x, n, replace = TRUE)
+  return(dna)
+}
+
+dna <- generar_dna(n)
+dna
+```
+
+2. Codifica una función que calcula el tamaño de una secuencia de DNA
+
+```{r}
+length(dna)
+```
+
+3. Crea una función que recibe una secuencia de DNA e imprime el porcentaje de cada base en la secuencia.
+
+```{r}
+conteo_dna <- function(letters_n){
+  match_A <- grepl("A", letters_n)
+  count_A <- sum(match_A)
+  match_C <- grepl("C", letters_n)
+  count_C <- sum(match_C)
+  match_G <- grepl("G", letters_n)
+  count_G <- sum(match_G)
+  match_T <- grepl("T", letters_n)
+  count_T <- sum(match_T)
+  totaln <- length(letters_n)
+  perA <- (count_A/totaln)*100
+  perC <- (count_C/totaln)*100
+  perG <- (count_G/totaln)*100
+  perT <- (count_T/totaln)*100
+  return(cat("Los porcentajes de cada base son:" ,"\n",
+             "A: ", perA, "%", "\n",
+             "C: ", perC, "%", "\n",
+             "G: ", perG, "%", "\n",
+             "T: ", perT, "%", "\n"))
+  }
+  
+n <- readline(prompt = "Ingresa la secuencia de DNA que seseas analizar: ")
+letters_n <- strsplit(n, "")[[1]]
+percent <- conteo_dna(letters_n)
+```
+
+4. Programa una función que transcribe DNA a RNA, asume que te están proporcionando la cadena codificante
+
+```{r}
+transc <- function(codificante){
+  codrna <- gsub("T", "U", codificante)
+  return(codrna)
+}
+
+codificante <- c("A", "C", "C", "C", "A", "T", "G", "T", "T", "C", "G")
+transc(codificante)
+```
+
+5. Crea una función que traduce una secuencia de RNA a una secuencia de proteínas, usa la siguiente tabla
+
+```{r}
+traduc <- function(rnatrad){
+  longrna <- length(rnatrad)
+  sobrante <- longrna %% 3
+  traducido <- character(0) 
+  rnaclean <- rnatrad[1:(longrna-sobrante)]
+  phe1 <- c("U", "U"," U")
+  phe2 <- c("U", "U", "C")
+  leu1 <- c("U", "U", "A")
+  leu2 <- c("U", "U", "G")
+  leu3 <- c("C", "U", "U")
+  leu4 <- c("C", "U", "C")
+  leu5 <- c("C", "U", "A")
+  leu6 <- c("C", "U", "G");
+  ile1 <- c("A", "U", "U")
+  ile2 <- c("A", "U", "C")
+  ile3 <- c("A", "U", "A")
+  met1 <- c("A", "U", "G")
+  val1 <- c("G", "U", "U")
+  val2 <- c("G", "U", "C")
+  val3 <- c("G", "U", "A")
+  val4 <- c("G", "U", "G")
+  ser1 <- c("U", "C", "U")
+  ser2 <- c("U", "C", "C")
+  ser3 <- c("U", "C", "A")
+  ser4 <- c("U", "C", "G")
+  ser5 <- c("A", "G", "U")
+  ser6 <- c("A", "G", "C")
+  pro1 <- c("C", "C", "U")
+  pro2 <- c("C", "C", "C")
+  pro3 <- c("C", "C", "A")
+  pro4 <- c("C", "C", "G")
+  thr1 <- c("A", "C", "U")
+  thr2 <- c("A", "C", "C")
+  thr3 <- c("A", "C", "A")
+  thr4 <- c("A", "C", "G")
+  ala1 <- c("G", "C", "U")
+  ala2 <- c("G", "C", "C")
+  ala3 <- c("G", "C", "A")
+  ala4 <- c("G", "C", "G")
+  tyr1 <- c("U", "A", "U")
+  tyr2 <- c("U", "A", "C")
+  stop1 <- c("U", "A", "A")
+  stop2 <- c("U", "A", "G")
+  stop3 <- c("U", "G", "A")
+  his1 <- c("C", "A", "U")
+  his2 <- c("C", "A", "C")
+  gln1 <- c("C", "A", "A")
+  gln2 <- c("C", "A", "G")
+  asn1 <- c("A", "A", "U")
+  asn2 <- c("A", "A", "C")
+  lys1 <- c("A", "A", "A")
+  lys2 <- c("A", "A", "G")
+  asp1 <- c("G", "A", "U")
+  asp2 <- c("G", "A", "C")
+  glu1 <- c("G", "A", "A")
+  glu2 <- c("G", "A", "G")
+  cys1 <- c("U", "G", "U")
+  cys2 <- c("U", "G", "C")
+  trp1 <- c("U", "G", "G")
+  arg1 <- c("C", "G", "U")
+  arg2 <- c("C", "G", "C")
+  arg3 <- c("C", "G", "A")
+  arg4 <- c("C", "G", "G")
+  arg5 <- c("A", "G", "A")
+  arg6 <- c("A", "G", "G")
+  gly1 <- c("G", "G", "U")
+  gly2 <- c("G", "G", "C")
+  gly3 <- c("G", "G", "A")
+  gly4 <- c("G", "G", "G")
+  for (i in seq(1, length(rnaclean), by=3)) {
+    codon <- rnaclean[i:(i+2)]
+    if (identical(codon, phe1) || identical(codon, phe2)){
+      traducido <- c(traducido, "Phe")
+      codon <- NULL
+    }
+    else if (identical(codon, leu1) || identical(codon, leu2) || identical(codon, leu3) || 
+             identical(codon, leu4) || identical(codon, leu5) || identical(codon, leu6)){
+      traducido <- c(traducido, "Leu")
+      codon <- NULL
+    }
+    else if (identical(codon, ile1) || identical(codon, ile2) || identical(codon, ile3)){
+      traducido <- c(traducido, "Ile")
+      codon <- NULL
+    }
+    else if (identical(codon, met1)){
+      traducido <- c(traducido, "Met")
+      codon <- NULL
+    }
+    else if (identical(codon, val1) || identical(codon, val2) || identical(codon, val3) || 
+             identical(codon, val4)){
+      traducido <- c(traducido, "Val")
+      codon <- NULL
+    }
+    else if (identical(codon, ser1) || identical(codon, ser2) || identical(codon, ser3) || 
+             identical(codon, ser4) || identical(codon, ser5) || identical(codon, ser6)){
+      traducido <- c(traducido, "Ser")
+      codon <- NULL
+    }
+    else if (identical(codon, pro1) || identical(codon, pro2) || identical(codon, pro3) || 
+             identical(codon, pro4)){
+      traducido <- c(traducido, "Pro")
+      codon <- NULL
+    }
+    else if (identical(codon, thr1) || identical(codon, thr2) || identical(codon, thr3) || 
+             identical(codon, thr4)){
+      traducido <- c(traducido, "Thr")
+      codon <- NULL
+    }
+    else if (identical(codon, ala1) || identical(codon, ala2) || identical(codon, ala3) || 
+             identical(codon, ala4)){
+      traducido <- c(traducido, "Ala")
+      codon <- NULL
+    }
+    else if (identical(codon, tyr1) || identical(codon, tyr2)){
+      traducido <- c(traducido, "Tyr")
+      codon <- NULL
+    }
+    else if (identical(codon, stop1) || identical(codon, stop2) || identical(codon, stop3)){
+      traducido <- c(traducido, "Stop")
+      codon <- NULL
+    }
+    else if (identical(codon, his1) || identical(codon, his2)){
+      traducido <- c(traducido, "His")
+      codon <- NULL
+    }
+    else if (identical(codon, gln1) || identical(codon, gln2)){
+      traducido <- c(traducido, "Gln")
+      codon <- NULL
+    }
+    else if (identical(codon, asn1) || identical(codon, asn2)){
+      traducido <- c(traducido, "Asn")
+      codon <- NULL
+    }
+    else if (identical(codon, lys1) || identical(codon, lys2)){
+      traducido <- c(traducido, "Lys")
+      codon <- NULL
+    }
+    else if (identical(codon, asp1) || identical(codon, asp2)){
+      traducido <- c(traducido, "Asp")
+      codon <- NULL
+    }
+    else if (identical(codon, glu1) || identical(codon, glu2)){
+      traducido <- c(traducido, "Glu")
+      codon <- NULL
+    }
+    else if (identical(codon, cys1) || identical(codon, cys2)){
+      traducido <- c(traducido, "Cys")
+      codon <- NULL
+    }
+    else if (identical(codon, trp1)){
+      traducido <- c(traducido, "Trp")
+      codon <- NULL
+    }
+    else if (identical(codon, arg1) || identical(codon, arg2) || identical(codon, arg3) ||
+             identical(codon, arg4) || identical(codon, arg5) || identical(codon, arg6)){
+      traducido <- c(traducido, "Arg")
+      codon <- NULL
+    }
+    else if (identical(codon, gly1) || identical(codon, gly2) || identical(codon, gly3) || 
+             identical(codon, gly4)){
+      traducido <- c(traducido, "Gly")
+      codon <- NULL
+    }
+  }
+ return(traducido)
+}
+rnatrad <- c("G", "U", "C", "U", "G", "A", "A", "A", "G", "G", "C",
+             "U", "U", "U", "G", "G", "C", "C", "A", "C", "U", "U")
+traduc(rnatrad)
+```
+
+6. Consideremos, por ejemplo, la secuencia TGCGATAC. Como no se indica lo contrario, se asume que la secuencia está escrita en sentido 5' -> 3' y, por lo tanto, se trata de la hebra directa (forward strand):
+  **Hebra directa: 5'-TGCGATAC-3'**
+  
+   Si decido escribir esta misma secuencia empezando por el extremo 3' se obtiene la hebra inversa (reverse strand):
+  **Hebra inversa: 3'-CATAGCGT-5'**
+  
+  **Escribe una función que reciba una hebra directa y regresa la hebra inversa.**
+  
+```{r}
+hebinv <- function(hdsplit){
+   hinv <- rev(hdsplit)
+   hinversa <- paste(hinv, collapse = "")
+   return(cat("La hebra inversa es: ", hinversa))
+}
+hebdir <- readline(prompt = "Ingresa la secuencia de la hebra directa: ")
+hdsplit <- strsplit(hebdir, "")[[1]]
+hebinv(hdsplit)
+```
+
+7. Para representar una molécula de ADN de doble hebra basta con escribir la secuencia de una de sus hebras. Normalmente se representa la molécula escribiendo primero la hebra directa y debajo la hebra complementaria (complementary strand). La hebra complementaria se escribe en sentido 3'->5' para que las bases de ambas hebras queden emparejandas:
+**a. Hebra directa: 5'-TGCGATAC-3'**
+**b. Hebra complementaria: 3'-ACGCTATG-5'*
+   Escribe una función qué recibe una hebra directa y obtiene la hebra complementaria.
+
+```{r}
+hebcomp <- function(hdsplit){
+  comple <- chartr("ATGC", "TACG", hdsplit)
+  return(cat("La hebra complementaria es: ", comple))
+}
+hebdir <- readline(prompt = "Ingresa la secuencia de la hebra directa: ")
+hdsplit <- strsplit(hebdir, "")[[1]]
+hebcomp(hdsplit)
+```
+
+8. Si escribimos la secuencia de la hebra complementaria en sentido inverso (5'->3') se obtiene la complementaria inversa (reverse-complement):
+**a. Hebra directa: 5'-TGCGATAC-3'**
+**b. Hebra complementaria: 3'-ACGCTATG-5'**
+**c. Hebra complementaria inversa: 5'-GTATCGCA-3'**
+   Escribe la función en R para obtener la hebra complementaria inversa, desde una hebra directa.
+   
+```{r}
+hcinv <- function(hdsplit){
+  comple <- chartr("ATGC", "TACG", hdsplit)
+  invcomp <- rev(comple)
+  hinvcomp <- paste(invcomp, collapse = "")
+  return(cat("La hebra complementaria inversa es: ", hinvcomp))
+}
+hebdir <- readline(prompt = "Ingresa la secuencia de la hebra directa: ")
+hdsplit <- strsplit(hebdir, "")[[1]]
+hcinv(hdsplit)
+```
+
+9. Modifica dos de las funciones para que tomen en cuenta que las secuencias pueden contener caracteres especiales donde aparte de ATGC, en ADN, y AUGC, en ARN, pueden existir guiones (nucleótidos omitidos de la secuencia) y N (nucleótidos desconocido).
+
+```{r}
+# No fue necesario modificarla por la forma en que estaba elaborada la función, solo hice la prueba modificando nucleótidos
+# por la letra N en los desconocidos y sustituyendo algunos nucleótidos por un guión
+transc <- function(codificante){
+  codrna <- gsub("T", "U", codificante)
+  return(codrna)
+}
+
+codificante <- c("A", "C", "-", "C", "-", "T", "G", "T", "T", "N", "G")
+transc(codificante)
+```
+
+```{r}
+# Tampoco fue necesario modificar la función ya que generé ejemplos con N y guiones y estos se respetaron
+hcinv <- function(hdsplit){
+  comple <- chartr("ATGC", "TACG", hdsplit)
+  invcomp <- rev(comple)
+  hinvcomp <- paste(invcomp, collapse = "")
+  return(cat("La hebra complementaria inversa es: ", hinvcomp))
+}
+hebdir <- readline(prompt = "Ingresa la secuencia de la hebra directa: ")
+hdsplit <- strsplit(hebdir, "")[[1]]
+hcinv(hdsplit)
+```
+```
+
