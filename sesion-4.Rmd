@@ -54,7 +54,7 @@ conteo_dna <- function(letters_n){
              "T: ", perT, "%", "\n"))
   }
   
-n <- readline(prompt = "Ingresa la secuencia de DNA que seseas analizar: ")
+n <- readline(prompt = "Ingresa la secuencia de DNA que deseas analizar: ")
 letters_n <- strsplit(n, "")[[1]]
 percent <- conteo_dna(letters_n)
 ```
@@ -64,10 +64,11 @@ percent <- conteo_dna(letters_n)
 ```{r}
 transc <- function(codificante){
   codrna <- gsub("T", "U", codificante)
+  codrna <- paste(codrna, collapse = "")
   return(codrna)
 }
-
-codificante <- c("A", "C", "C", "C", "A", "T", "G", "T", "T", "C", "G")
+codprompt <- readline(prompt = "Ingresa la secuencia del DNA a transcribir: ")
+codificante <- strsplit(codprompt, "")[[1]]
 transc(codificante)
 ```
 
