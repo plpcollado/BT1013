@@ -264,7 +264,7 @@ hdsplit <- strsplit(hebdir, "")[[1]]
 hebinv(hdsplit)
 ```
 
-7. Para representar una molécula de ADN de doble hebra basta con escribir la secuencia de una de sus hebras. Normalmente se representa la molécula escribiendo primero la hebra directa y debajo la hebra complementaria (complementary strand). La hebra complementaria se escribe en sentido 3'->5' para que las bases de ambas hebras queden emparejandas:
+7. Para representar una molécula de ADN de doble hebra basta con escribir la secuencia de una de sus hebras. Normalmente se representa la molécula escribiendo primero la hebra directa y debajo la hebra complementaria (complementary strand). La hebra complementaria se escribe en sentido 3'->5' para que las bases de ambas hebras queden emparejadas:
 **a. Hebra directa: 5'-TGCGATAC-3'**
 **b. Hebra complementaria: 3'-ACGCTATG-5'*
    Escribe una función qué recibe una hebra directa y obtiene la hebra complementaria.
@@ -272,7 +272,8 @@ hebinv(hdsplit)
 ```{r}
 hebcomp <- function(hdsplit){
   comple <- chartr("ATGC", "TACG", hdsplit)
-  return(cat("La hebra complementaria es: ", comple))
+  comcollap <- paste(comple, collapse = "")
+  return(cat("La hebra complementaria es: ", comcollap))
 }
 hebdir <- readline(prompt = "Ingresa la secuencia de la hebra directa: ")
 hdsplit <- strsplit(hebdir, "")[[1]]
