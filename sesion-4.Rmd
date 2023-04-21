@@ -146,49 +146,49 @@ traduc <- function(rnatrad){
   for (i in seq(1, length(rnaclean), by=3)) {
     codon <- rnaclean[i:(i+2)]
     if (identical(codon, phe1) || identical(codon, phe2)){
-      traducido <- c(traducido, "Phe")
+      traducido <- c(traducido, "F")
       codon <- NULL
     }
     else if (identical(codon, leu1) || identical(codon, leu2) || identical(codon, leu3) || 
              identical(codon, leu4) || identical(codon, leu5) || identical(codon, leu6)){
-      traducido <- c(traducido, "Leu")
+      traducido <- c(traducido, "L")
       codon <- NULL
     }
     else if (identical(codon, ile1) || identical(codon, ile2) || identical(codon, ile3)){
-      traducido <- c(traducido, "Ile")
+      traducido <- c(traducido, "I")
       codon <- NULL
     }
     else if (identical(codon, met1)){
-      traducido <- c(traducido, "Met")
+      traducido <- c(traducido, "M")
       codon <- NULL
     }
     else if (identical(codon, val1) || identical(codon, val2) || identical(codon, val3) || 
              identical(codon, val4)){
-      traducido <- c(traducido, "Val")
+      traducido <- c(traducido, "V")
       codon <- NULL
     }
     else if (identical(codon, ser1) || identical(codon, ser2) || identical(codon, ser3) || 
              identical(codon, ser4) || identical(codon, ser5) || identical(codon, ser6)){
-      traducido <- c(traducido, "Ser")
+      traducido <- c(traducido, "S")
       codon <- NULL
     }
     else if (identical(codon, pro1) || identical(codon, pro2) || identical(codon, pro3) || 
              identical(codon, pro4)){
-      traducido <- c(traducido, "Pro")
+      traducido <- c(traducido, "P")
       codon <- NULL
     }
     else if (identical(codon, thr1) || identical(codon, thr2) || identical(codon, thr3) || 
              identical(codon, thr4)){
-      traducido <- c(traducido, "Thr")
+      traducido <- c(traducido, "T")
       codon <- NULL
     }
     else if (identical(codon, ala1) || identical(codon, ala2) || identical(codon, ala3) || 
              identical(codon, ala4)){
-      traducido <- c(traducido, "Ala")
+      traducido <- c(traducido, "A")
       codon <- NULL
     }
     else if (identical(codon, tyr1) || identical(codon, tyr2)){
-      traducido <- c(traducido, "Tyr")
+      traducido <- c(traducido, "Y")
       codon <- NULL
     }
     else if (identical(codon, stop1) || identical(codon, stop2) || identical(codon, stop3)){
@@ -196,52 +196,53 @@ traduc <- function(rnatrad){
       codon <- NULL
     }
     else if (identical(codon, his1) || identical(codon, his2)){
-      traducido <- c(traducido, "His")
+      traducido <- c(traducido, "H")
       codon <- NULL
     }
     else if (identical(codon, gln1) || identical(codon, gln2)){
-      traducido <- c(traducido, "Gln")
+      traducido <- c(traducido, "Q")
       codon <- NULL
     }
     else if (identical(codon, asn1) || identical(codon, asn2)){
-      traducido <- c(traducido, "Asn")
+      traducido <- c(traducido, "N")
       codon <- NULL
     }
     else if (identical(codon, lys1) || identical(codon, lys2)){
-      traducido <- c(traducido, "Lys")
+      traducido <- c(traducido, "K")
       codon <- NULL
     }
     else if (identical(codon, asp1) || identical(codon, asp2)){
-      traducido <- c(traducido, "Asp")
+      traducido <- c(traducido, "D")
       codon <- NULL
     }
     else if (identical(codon, glu1) || identical(codon, glu2)){
-      traducido <- c(traducido, "Glu")
+      traducido <- c(traducido, "E")
       codon <- NULL
     }
     else if (identical(codon, cys1) || identical(codon, cys2)){
-      traducido <- c(traducido, "Cys")
+      traducido <- c(traducido, "C")
       codon <- NULL
     }
     else if (identical(codon, trp1)){
-      traducido <- c(traducido, "Trp")
+      traducido <- c(traducido, "W")
       codon <- NULL
     }
     else if (identical(codon, arg1) || identical(codon, arg2) || identical(codon, arg3) ||
              identical(codon, arg4) || identical(codon, arg5) || identical(codon, arg6)){
-      traducido <- c(traducido, "Arg")
+      traducido <- c(traducido, "R")
       codon <- NULL
     }
     else if (identical(codon, gly1) || identical(codon, gly2) || identical(codon, gly3) || 
              identical(codon, gly4)){
-      traducido <- c(traducido, "Gly")
+      traducido <- c(traducido, "G")
       codon <- NULL
     }
   }
+ traducido <- paste(traducido, collapse = "")
  return(traducido)
 }
-rnatrad <- c("G", "U", "C", "U", "G", "A", "A", "A", "G", "G", "C",
-             "U", "U", "U", "G", "G", "C", "C", "A", "C", "U", "U")
+rnat <- readline(prompt = "Ingresa la secuencia del DNA a traducir: ")
+rnatrad <- strsplit(rnat, "")[[1]]
 traduc(rnatrad)
 ```
 
