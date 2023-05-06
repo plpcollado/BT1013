@@ -1,0 +1,256 @@
+---
+title: "Evidencia 1"
+author: "Pedro Luis Pérez Collado"
+output: html_document
+date: "2023-04-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("seqinr")
+```
+**PARTE 1**
+
+*Responde justificadamente las siguientes preguntas:*
+
+Investiga, ¿Cuál es la situación actual de COVID-19 a nivel mundial, en México, en tu estado de origen y en tu municipio, alcaldía o colonia? Puedes iniciar tu búsqueda en el sitio de Johns Hopkins
+
+-Global
+
+![   Tomado de: (COVID-19 Map, n.d.)](/Users/pedroperez/Desktop/mundo.png)
+
+
+
+
+-México
+
+![   Tomado de: (COVID-19 Map, n.d.)](/Users/pedroperez/Desktop/mexico.png)
+
+
+
+
+
+-Veracruz
+
+![   Tomado de: (COVID-19 Monitoreo de la Situación por Estados, n.d.)](/Users/pedroperez/Desktop/veracruz.png)
+
+
+
+
+-Coyoacán
+
+![   Tomado de: (COVID-19 Monitoreo de La Situación Por Municipios, n.d.)](/Users/pedroperez/Desktop/coyoacan.png)
+
+
+
+
+¿Cuál fue la primera variante del virus que se propagó a todo el mundo?
+
+-Alpha(B.1.1.7) fue la primera variante de preocupación (VOC) identificada. Fue identificada inicialmente en el Reino Unido en el otoño del 2020(Lauring & Malani, 2021).
+
+¿Cuáles son las otras variantes del virus que existen en otras regiones del mundo?
+
+![   Tomado de: (Chavda et al., 2022)](/Users/pedroperez/Desktop/variantes.png)
+
+
+
+
+¿Cómo buscarías información de la variante del virus en tu país? 
+
+-La buscaría en el centro de vigilancia de variantes que tiene el CONACYT(Vigilancia de variantes del virus SARS-CoV-2, n.d.)
+
+Imagina que te encuentras en una situación similar a la de Li Wenliang, médico chino que intentó alertar sobre el brote de coronavirus en su país, pero fue detenido por las autoridades y obligado a retractarse, ¿qué harías en su caso? Selecciona un inciso:a) Lo reportas al centro de investigación o la universidad. b) Lo reportas a la prensa. c) Guardas la información. Elige y justifica tu respuesta.
+
+-**a) Lo reporto al centro de investigación o la universidad**
+Esta respuesta es debido a que si hay un grupo de personas con una educación para poder tomar una decisión correcta es en la Universidad, dentro una Universidad se pueden contrastar ideas que permitan ejecutar la respuesta de la forma más adecuada, considero que la opción de reportarlo a la prensa es en un caso extremo, sin embargo puede no llegar la información de la forma más correcta a los tomadores de decisiones en el caso de decirlo a la prensa.
+
+**PARTE 2**
+
+*Realiza lo siguiente en un script de R y código:*
+
+Obtén las secuencias de las variantes de SARS-CoV-2 desde el NCBI o el buscador de virus del NCBI.
+
+Las secuencias las obtuve de: (SARS-CoV-2 Variants Overview, n.d.)
+```{r}
+wuhan <- read.fasta("wuhan.fasta")
+wuhan.seq <- wuhan[[1]]
+alpha <- read.fasta("b117.fasta")
+alpha.seq <- alpha[[1]]
+beta <- read.fasta("b1351.fasta")
+beta.seq <- beta[[1]]
+gamma <- read.fasta("p1.fasta")
+gamma.seq <- gamma[[1]]
+delta <- read.fasta("b16172.fasta")
+delta.seq <- delta[[1]]
+omicron <- read.fasta("bj1.fasta")
+omicron.seq <- omicron[[1]]
+xbb <- read.fasta("xbb.fasta")
+xbb.seq <- xbb[[1]]
+xbb1 <- read.fasta("xbb1.fasta")
+xbb1.seq <- xbb1[[1]]
+xbb15 <- read.fasta("xbb15.fasta")
+xbb15.seq <- xbb15[[1]]
+xbb19 <- read.fasta("xbb19.fasta")
+xbb19.seq <- xbb19[[1]]
+seq.lista <- list(wuhan = wuhan.seq,
+                  alpha = alpha.seq,
+                  beta = beta.seq,
+                  gamma = gamma.seq,
+                  delta = delta.seq,
+                  omicron = omicron.seq,
+                  xbb = xbb.seq,
+                  xbb1 = xbb1.seq,
+                  xbb15 = xbb15.seq,
+                  xbb19 = xbb19.seq)
+```
+
+Calcula la longitud de las secuencias de cada variante.
+
+```{r}
+sapply(seq.lista, length)
+```
+
+¿Cuál es el %GC de cada variante?
+
+```{r}
+sapply(seq.lista, GC)
+```
+
+Crea las secuencias contrasentido de cada variante.
+
+**wuhan**
+
+```{r}
+antiwuhan <- rev(comp(wuhan.seq))
+head(antiwuhan)
+tail(antiwuhan)
+```
+
+**alpha**
+
+```{r}
+antialpha <- rev(comp(alpha.seq))
+head(antialpha)
+tail(antialpha)
+```
+
+**beta**
+
+```{r}
+antibeta <- rev(comp(beta.seq))
+head(antibeta)
+tail(antibeta)
+```
+
+**gamma**
+
+```{r}
+antigamma <- rev(comp(gamma.seq))
+head(antigamma)
+tail(antigamma)
+```
+
+**delta**
+
+```{r}
+antidelta <- rev(comp(delta.seq))
+head(antidelta)
+tail(antidelta)
+```
+
+**omicron**
+
+```{r}
+antiomicron <- rev(comp(omicron.seq))
+head(antiomicron)
+tail(antiomicron)
+```
+
+**xbb**
+
+```{r}
+antixbb <- rev(comp(xbb.seq))
+head(antixbb)
+tail(antixbb)
+```
+
+**xbb1*
+
+```{r}
+antixbb1 <- rev(comp(xbb1.seq))
+head(antixbb1)
+tail(antixbb1)
+```
+
+**xbb15**
+
+```{r}
+antixbb15 <- rev(comp(xbb15.seq))
+head(antixbb15)
+tail(antixbb15)
+```
+
+**xbb19**
+
+```{r}
+antixbb19 <- rev(comp(xbb19.seq))
+head(antixbb19)
+tail(antixbb19)
+```
+
+Crea una gráfica donde compares las bases de ADN que componen a cada una de las variantes del virus.
+
+
+```{r}
+compara <- function(seq1, seq2, seq3, seq4, seq5, seq6, seq7, seq8, seq9, seq10, title1, title2, title3, title4, title5,
+                    title6, title7, title8, title9, title10){
+  count.seq1 <- count(seq1, 1)
+  count.seq2 <- count(seq2, 1)
+  count.seq3 <- count(seq3, 1)
+  count.seq4 <- count(seq4, 1)
+  count.seq5 <- count(seq5, 1)
+  count.seq6 <- count(seq6, 1)
+  count.seq7 <- count(seq7, 1)
+  count.seq8 <- count(seq8, 1)
+  count.seq9 <- count(seq9, 1)
+  count.seq10 <- count(seq10, 1)
+  par(mfrow=c(2,5))
+  barplot(count.seq1, col =c(1:4), main = paste(getName(seq1), title1, sep="\n"))
+  barplot(count.seq2, col =c(1:4), main = paste(getName(seq2), title2, sep="\n"))
+  barplot(count.seq3, col =c(1:4), main = paste(getName(seq3), title3, sep="\n"))
+  barplot(count.seq4, col =c(1:4), main = paste(getName(seq4), title4, sep="\n"))
+  barplot(count.seq5, col =c(1:4), main = paste(getName(seq5), title5, sep="\n"))
+  barplot(count.seq6, col =c(1:4), main = paste(getName(seq6), title6, sep="\n"))
+  barplot(count.seq7, col =c(1:4), main = paste(getName(seq7), title7, sep="\n"))
+  barplot(count.seq8, col =c(1:4), main = paste(getName(seq8), title8, sep="\n"))
+  barplot(count.seq9, col =c(1:4), main = paste(getName(seq9), title9, sep="\n"))
+  barplot(count.seq10, col =c(1:4), main = paste(getName(seq10), title10, sep="\n"))
+}
+
+compara(wuhan.seq, alpha.seq, beta.seq, gamma.seq, delta.seq, omicron.seq, xbb.seq, xbb1.seq, xbb15.seq, xbb19.seq,
+        "Wuhan", "B.1.1.7", "B.1.351", "P.1", "B.1.617.2", "BJ.1", "XBB", "XBB.1", "XBB.1.5", "XBB.1.9")
+```
+
+Agrega una interpretación escrita de las gráficas que integras.
+
+-En una apreciación a simple vista se ven idénticas la composición de nucleótidos, si tomamos en cuenta que la definición de variante es un genoma viral que contiene uno o más mutaciones. Y que en algunos casos, un linaje o grupo de linajes con cambios genéticos similares, pueden ser designados por la Organización Mundial de la Salud como una variante de preocupación (VOC, por sus siglas en inglés), variante de interés (VOI, por sus siglas en inglés) o variante de consecuencia alta (VOHC) por lo tanto esa similitud a simple vista es esperada.
+
+-Si se quisiera hacer un análisis de las variantes, sería más adecuado realizar un análisis filogenético, lo cual nos puede dar información de cómo ha evolucionado el virus(Li et al., 2020).
+
+
+*Referencias*
+
+* Chavda, V. P., Patel, A. B., & Vaghasiya, D. D. (2022). SARS‐CoV‐2 variants and vulnerability at the global level. Journal of Medical Virology, 94(7), 2986–3005. https://doi.org/10.1002/jmv.27717
+* Coronavirus Disease 2019 (COVID-19). (2020, February 11). Centers for Disease Control and Prevention. https://www.cdc.gov/coronavirus/2019-ncov/variants/variant-classifications.html
+* COVID-19 Map. (n.d.). Johns Hopkins Coronavirus Resource Center. Retrieved April 25, 2023, from https://coronavirus.jhu.edu/map.html
+* COVID-19 Monitoreo de la Situación por Estados. (n.d.). Retrieved April 24, 2023, from https://covid19.ciga.unam.mx/apps/55176cfbbf47463fbc778c5b5e77fea9
+* COVID-19 Monitoreo de la Situación por Municipios. (n.d.). Retrieved April 24, 2023, from https://covid19.ciga.unam.mx/apps/ba72d4b0b6464491890d8e91c58979c1
+* Lauring, A. S., & Malani, P. N. (2021). Variants of SARS-CoV-2. JAMA, 326(9), 880. https://doi.org/10.1001/jama.2021.14181
+* Li, T., Liu, D., Yang, Y., Guo, J., Feng, Y., Zhang, X., Cheng, S., & Feng, J. (2020). Phylogenetic supertree reveals detailed evolution of SARS-CoV-2. Scientific Reports, 10(1), 22366. https://doi.org/10.1038/s41598-020-79484-8
+* SARS-CoV-2 Variants Overview. (n.d.). Retrieved April 25, 2023, from https://www.ncbi.nlm.nih.gov/activ
+* Vigilancia de variantes del virus SARS-CoV-2. (n.d.). Vigilancia de variantes del virus SARS-CoV-2. Retrieved April 25, 2023, from https://salud.conacyt.mx/coronavirus/variantes/
+
+

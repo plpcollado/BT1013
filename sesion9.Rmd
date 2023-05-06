@@ -1,0 +1,344 @@
+---
+title: "Árboles Filogenéticos en R"
+output: html_document
+author: "Pedro Luis Pérez Collado"
+date: "2023-05-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+```
+
+# Parte 1. Corre las siguientes secciones de código y familiarizate con los objetos
+
+## El objeto "phylo" en R
+
+Ahora hemos instalado paquetes críticos (ape, phangorn, phytools, geiger). El paquete principal más importante para las filogenias en R se llama “ape”, que significa Análisis de Filogenética y Evolución en R. El paquete lo puedes consultar en: [APE] (http://ape-package.ird.fr/)
+
+```{r}
+install.packages("phytools")
+```
+
+```{r}
+install.packages("ggpubr")
+```
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+     install.packages("BiocManager")
+
+BiocManager::install("ggmsa") # Bioconductor
+```
+
+```{r}
+library(BiocManager)
+```
+
+```{r}
+library(ggmsa)
+```
+
+```{r}
+library(phytools)
+```
+
+```{r}
+library(ggpubr)
+```
+
+```{r}
+library(ape)
+
+text.string <- "(((cow, pig), whale), (bat,(lemur, human)));"
+vert.tree <- read.tree(text = text.string)
+class(vert.tree)
+vert.tree
+
+plot(vert.tree)
+```
+
+## Genera el código para el siguiente árbol:
+
+```{r}
+library(ape)
+
+text.string2 <- "(Orangutans,(Gorillas, ((Bonobos, Chimpanzees), Humans)));"
+vert.tree2 <- read.tree(text = text.string2)
+class(vert.tree2)
+vert.tree2
+
+plot(vert.tree2)
+```
+
+## Un ejemplo con phytools:
+
+```{r}
+library(phytools)
+roundPhylogram(vert.tree)
+
+```
+
+
+Los árboles sin raiz, **unrooted**, ilustran la relación de los nodos de las hojas sin hacer suposiciones sobre la ascendencia. No requieren que la raíz ancestral sea conocida o inferida. Los árboles no enraizados siempre se pueden generar a partir de los enraizados simplemente omitiendo la raíz. Por el contrario, inferir la raíz de un árbol sin raíz requiere algunos medios para identificar la ascendencia. Esto normalmente se hace incluyendo un grupo externo en los datos de entrada para que la raíz esté necesariamente entre el grupo externo y el resto de los taxones en el árbol, o introduciendo suposiciones adicionales sobre las tasas de evolución relativas en cada rama, como una aplicación de la hipótesis del reloj molecular.
+
+```{r}
+library(phytools)
+roundPhylogram(vert.tree)
+
+plot(unroot(vert.tree), type ='unrooted')
+```
+
+```{r}
+class(vert.tree)
+vert.tree
+plot(vert.tree)
+
+str(vert.tree)
+```
+
+```{r}
+vert.tree$edge
+```
+
+El objeto creado en la memoria cuando simulamos o estimamos una filogenia, o leemos una de un archivo de entrada, es una lista de la clase “filo”.
+
+Recuerde, una lista es solo un tipo de objeto personalizable que puede combinar diferentes objetos de diferentes tipos. Por ejemplo, una lista puede tener un vector de números reales (con el modo “numérico”) como primer elemento; y luego un vector de cadenas (con el modo “carácter”) como su segundo elemento; y así. Asignar nuestro árbol con una clase especial, “phylo”, es solo una forma conveniente de indicarle a las funciones especiales en R cómo tratar ese objeto.
+
+Un objeto de la clase “phylo” tiene al menos tres partes. Estos normalmente están ocultos, por ejemplo, simplemente escribir el nombre de su objeto “phylo” no le da la estructura en la memoria, como lo hace para muchos objetos R:
+
+vert.tree
+
+Para comprender la estructura de un objeto “filo” un poco más claramente, leamos una filogenia mucho más simple, y luego descomponga en sus componentes esenciales:
+
+
+```{r}
+plot(vert.tree)
+tiplabels()
+nodelabels() #Una tercera puede ser la distancia
+```
+
+```{r}
+anolis.tree <- read.tree(file="alo.tre")
+plotTree(anolis.tree, fsize = 0.4, nw = 1)
+```
+
+# Caso de estudio:
+
+## A Novel Coronavirus from patients with Pneumonia in China, 2019
+
+“In December 2019, a cluster of patients with pneumonia of unknown cause was linked to a seafood wholesale market in Wuhan, China. A previously unknown betacoronavirus was discovered through the use of unbiased sequencing in samples from patients with pneumonia. Human airway epithelial cells were used to isolate a novel coronavirus, named 2019-nCoV, which formed a clade within the subgenus sarbecovirus, Orthocoronavirinae subfamily. Different from both MERS-CoV and SARS-CoV, 2019-nCoV is the seventh member of the family of coronaviruses that infect humans. Enhanced surveillance and further investigation are ongoing. (Funded by the National Key Research and Development Program of China and the National Major Project for Control and Prevention of Infectious Disease in China.)”
+
+## Cargaremos las librerías necesarias
+
+```{r}
+library(Biostrings) # Bioconductor
+```
+
+```{r}
+library(seqinr) # CRAN
+```
+
+```{r}
+library(adegenet) # CRAN
+```
+
+```{r}
+library(ape) # CRAN
+```
+
+```{r}
+library(ggtree) # Bioconductor
+```
+
+```{r}
+library(DECIPHER) # Bioconductor
+```
+
+```{r}
+library(viridis) # CRAN
+```
+
+```{r}
+library(ggplot2) # CRAN
+```
+
+![El trabajo de China Novel Coronavirus Investigating and Research Team](SARStree.png)
+Cargaremos las sección azul de SARS-COV, MERS-COV y SARS-COV2 con algunas variantes: 1. “AY508724” SARS coronavirus NS-1, complete genome 2. “AY485277” SARS coronavirus Sino1-11, complete genome 3. “AY390556” SARS coronavirus GZ02, complete genome 4. “AY278489” SARS coronavirus GD01, complete genome 5. “MN908947” Severe acute respiratory syndrome coronavirus 2 isolate Wuhan-Hu-1, complete genome 6. “MN985325” Severe acute respiratory syndrome coronavirus 2 isolate 2019-nCoV/USA-WA1/2020, complete genome 7. “MT292571” Severe acute respiratory syndrome coronavirus 2 isolate SARS-CoV-2/human/ESP/Valencia12/2020, complete genome 8. “JX869059” Human betacoronavirus 2c EMC/2012, complete genome
+
+## Define los identificadores de los virus que usarás:
+
+```{r}
+virus <- c(  "JX869059", "AY508724", "MN908947", "AY390556", "AY278489", "MN985325","AY485277","MT292571")
+```
+
+# Parte 2: Genera el código para hacer las siguientes acciones:
+
+1. Obtén las secuencias, estructura del DNABin, concentramos en un archivo todas las secuencias y cargamos las secuencias:
+
+```{r}
+virus_sequences <- read.GenBank(virus)
+virus_sequences
+str(virus_sequences)
+```
+
+```{r}
+atr <- attributes(virus_sequences)
+```
+
+```{r}
+length(atr)
+```
+
+```{r}
+names(atr)
+```
+
+```{r}
+atr$species
+```
+
+```{r}
+atr$species[3]
+```
+
+```{r}
+write.dna(virus_sequences, file = "virus_sequences.fasta", format = "fasta",
+          nbcol = 6, colsep = " ", colw = 10, append = FALSE)
+```
+
+```{r}
+virus_seq_na <- readDNAStringSet("virus_sequences.fasta", format = "fasta")
+```
+
+```{r}
+virus_seq_na
+```
+
+```{r}
+virus_seq_na <- OrientNucleotides(virus_seq_na)
+```
+
+```{r}
+virus_seq_na
+```
+2. Alineamiento de las secuencias: Un alineamiento múltiple de secuencias es un alineamiento de más de dos secuencias. Estas secuencias, como en el caso de los alieamientos por parejas pueden ser ADN, ARN o proteína. Las aplicaciones más habituales de los alineamientos múltiples son:
+* la reconstrucción filogenética,
+* el análisis estructural de proteínas,
+* la búsqueda de dominios conservados y
+* la búsqueda de regiones conservadas en promotores. En todos los casos los algoritmos de alineamiento múltiple asumen que las secuencias que estamos alineando descienden de un antepasado común y lo que intentamos hacer es alinear las posiciones homólogas. 
+
+```{r}
+virus_align <- AlignSeqs(virus_seq_na)
+```
+3. Visualizar el resultado del alineamiento:
+
+```{r}
+BrowseSeqs(virus_align, highlight = 0)
+```
+
+4. Guardar el resultado y obtener el nuevo archivo:
+
+```{r}
+writeXStringSet(virus_align, file = "virus_aligned_seq.fasta")
+```
+
+```{r}
+virus_aligned <- read.alignment("virus_aligned_seq.fasta", format = "fasta")
+```
+
+```{r}
+str(virus_aligned)
+```
+5. Crear una matriz de distancia:
+
+```{r}
+matriz_distancias <- dist.alignment(virus_aligned, matrix = "similarity")
+```
+
+```{r}
+matriz_distancias
+```
+
+```{r}
+class(matriz_distancias)
+```
+
+```{r}
+as.matrix(matriz_distancias)
+```
+
+```{r}
+temp <- as.data.frame(as.matrix(matriz_distancias))
+```
+
+6. Visualiza la matriz de distancia: donde sombras más oscuas de gris significan una mayor distancia
+
+```{r}
+table.paint(temp)
+```
+
+7. Creación del árbol con el paquete pythools y ape, así como el plot del árbol:
+
+```{r}
+virus_filogenia <- nj(matriz_distancias)
+virus_filogenia <- ladderize(virus_filogenia)
+
+plotTree(virus_filogenia)
+```
+```{r}
+virus_filogenia <- nj(matriz_distancias)
+plot.phylo(virus_filogenia)
+```
+
+8. Plot utilizando ggtree que es parte de ggplot:
+
+```{r}
+virus_filogenia <- nj(matriz_distancias)
+virus_filogenia <- ladderize(virus_filogenia)
+
+ggtree(virus_filogenia, layout = 'circular') +
+  geom_tiplab()
+```
+
+```{r}
+virus_filogenia <- nj(matriz_distancias)
+virus_filogenia <- ladderize(virus_filogenia)
+
+ggtree(virus_filogenia, branch.length = "none") +
+  geom_tiplab()
+```
+
+9. Visualiza el alineamiento de las secuencias:
+
+
+```{r}
+library(ggmsa)
+
+ggmsa(virus_align, 500, 550)
+```
+
+10. Combina el árbol filogenético con el alineamiento de las secuencias:
+
+```{r}
+nbin <- as.DNAbin(virus_align)
+tree <- ggtree(virus_filogenia) + geom_tiplab()
+njmsaplot <- msaplot(tree, nbin, offset = 0.17, width=0.9, height = 0.5)
+njmsaplot
+```
+
+## Referencias
+
+
+```{r}
+citation("ape")
+citation("ggplot2")
+citation("phytools")
+citation("ggpubr")
+citation("ggmsa")
+citation("seqinr")
+citation("adegenet")
+citation("ggtree")
+citation("DECIPHER")
+citation("viridis")
+```

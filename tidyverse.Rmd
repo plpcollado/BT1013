@@ -1,0 +1,91 @@
+---
+title: "tidyverse"
+output: html_document
+date: "2023-04-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("tidyverse")
+```
+
+```{r}
+library("tidyverse")
+```
+
+```{r}
+iris %>%
+  head()
+```
+
+
+```{r}
+iris %>%
+  select(Species) %>%
+  unique()
+```
+
+```{r}
+iris %>%
+  filter(Species == 'setosa') %>%
+  tally()
+```
+
+```{r}
+iris %>%
+  select(Petal.Length, Sepal.Length) %>%
+  summary()
+```
+
+```{r}
+iris %>%
+  filter(Petal.Length > 3.7 & Sepal.Length > 5.8) %>%
+  group_by(Species)  %>%
+  tally()
+```
+
+```{r}
+iris %>%
+  filter(Petal.Length > 3.7 & Sepal.Length > 3.8) %>%
+  group_by(Species) %>%
+  summarise(mean.petal.length = mean(Petal.Length),
+            mean.sepal.length = mean(Sepal.Length),
+            n = n())
+```
+
+```{r}
+iris %>%
+  ggplot(aes(x=Petal.Length)) +
+  geom_histogram(alpha = 0.6, position = "identity",  aes (col = Species, fill = Species)) +
+  geom_density(aes(col=Species)) +
+  labs(title = "Distribución de la longitud de los pétalos", x =
+         "Longitud de Pétalos", y = "Número de individuos") +
+  theme_bw()
+
+
+```
+
+```{r}
+iris %>%
+  ggplot() +
+  geom_point(aes (x=Petal.Length, y=Sepal.Length, col = Species)) +
+  scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))
+```
+
+```{r}
+iris %>%
+  ggplot() +
+  geom_point(aes (x=Petal.Length, y=Petal.Width, col = Species)) +
+  scale_color_brewer(palette = "Dark2")
+```
+
+```{r}
+iris %>%
+  ggplot() +
+  geom_point(aes (x=Petal.Length, y=Sepal.Length, col = Species)) +
+  scale_color_brewer(palette = "Dark2")+
+  facet_grid(~Species)
+```

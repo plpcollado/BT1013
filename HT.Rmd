@@ -1,0 +1,158 @@
+---
+title: "HT"
+output: html_document
+date: "2023-04-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("seqinr") # CRAN
+install.packages("adegenet") # CRAN
+install.packages("ape") #CRAN
+install.packages("viridis") # CRAN
+install.packages("ggplot2") # CRAN
+```
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+     install.packages("BiocManager")
+
+BiocManager::install("Biostrings") # Bioconductor
+BiocManager::install("ggtree") # Bioconductor
+BiocManager::install("DECIPHER") # Bioconductor
+```
+```{r}
+library(Biostrings) # Bioconductor
+```
+
+```{r}
+library(seqinr) # CRAN
+```
+
+```{r}
+library(adegenet) # CRAN
+```
+
+```{r}
+library(ape) # CRAN
+```
+
+```{r}
+library(ggtree) # Bioconductor
+```
+
+```{r}
+library(DECIPHER) # Bioconductor
+```
+
+```{r}
+library(viridis) # CRAN
+```
+
+```{r}
+library(ggplot2) # CRAN
+```
+
+```{r}
+virus <- c(  "JX869059", "AY508724", "MN908947", "AY390556", "MN985325")
+```
+
+```{r}
+virus_sequences <- read.GenBank(virus)
+virus_sequences
+str(virus_sequences)
+```
+
+```{r}
+atr <- attributes(virus_sequences)
+```
+
+```{r}
+length(atr)
+```
+
+```{r}
+names(atr)
+```
+
+```{r}
+atr$species
+```
+
+```{r}
+atr$species[3]
+```
+
+```{r}
+write.dna(virus_sequences, file = "virus_sequences.fasta", format = "fasta",
+          nbcol = 6, colsep = " ", colw = 10, append = FALSE)
+```
+
+```{r}
+virus_seq_na <- readDNAStringSet("virus_sequences.fasta", format = "fasta")
+```
+
+```{r}
+virus_seq_na
+```
+
+```{r}
+virus_seq_na <- OrientNucleotides(virus_seq_na)
+```
+
+```{r}
+virus_seq_na
+```
+
+```{r}
+virus_align <- AlignSeqs(virus_seq_na)
+```
+
+```{r}
+BrowseSeqs(virus_align, highlight = 0)
+```
+
+```{r}
+writeXStringSet(virus_align, file = "virus_aligned_seq.fasta")
+```
+
+```{r}
+virus_aligned <- read.alignment("virus_aligned_seq.fasta", format = "fasta")
+```
+
+```{r}
+str(virus_aligned)
+```
+
+```{r}
+matriz_distancias <- dist.alignment(virus_aligned, matrix = "similarity")
+```
+
+```{r}
+matriz_distancias
+```
+
+```{r}
+class(matriz_distancias)
+```
+
+```{r}
+as.matrix(matriz_distancias)
+```
+
+```{r}
+temp <- as.data.frame(as.matrix(matriz_distancias))
+```
+
+```{r}
+table.paint(temp)
+```
+```{r}
+table.paint(temp)
+```
+
+
+

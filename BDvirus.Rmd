@@ -1,0 +1,206 @@
+---
+title: "Base de datos de virus"
+author: "Pedro Luis Pérez Collado"
+output: html_document
+date: "2023-04-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+```
+
+
+```{r}
+install.packages("seqinr")
+```
+
+```{r}
+library("seqinr")
+```
+
+```{r}
+dengue <- read.fasta("dengue.fasta")
+dengue.seq <- dengue[[1]]
+zika <- read.fasta("zika.fasta")
+zika.seq <- zika[[1]]
+sars <- read.fasta("sars.fasta")
+sars.seq <- sars[[1]]
+wuhan <- read.fasta("wuhan.fasta")
+wuhan.seq <- wuhan[[1]]
+mers <- read.fasta("mers.fasta")
+mers.seq <- mers[[1]]
+```
+
+De cada uno debes obtener sus secuencias y responder las siguientes preguntas:
+
+**Zika virus**
+1. ¿Cuál es el tamaño de cada secuencia?
+```{r}
+length(zika.seq)
+```
+
+2. ¿Cuál es la composición de nucleótidos de cada secuencia?
+```{r}
+count.zika <- count(zika.seq, 1)
+count.zika
+```
+
+3. ¿Cuál es el contenido de GC de cada virus?
+```{r}
+gc <- sum(count.zika[c(2,3)])/length(zika.seq)
+gc
+```
+
+4. Crear una función para obtener la secuencia en complementaria e imprimirla por cada secuencia, ejemplo:
+-Virus original: agttgttagtctacgtggaccgacaagaac
+-Complementaria: tcaacaatcagatgcacctggctgttcttg
+
+```{r}
+comp(zika.seq, forceToLower = TRUE, ambiguous = FALSE)
+```
+**SARS coronavirus**
+
+1. ¿Cuál es el tamaño de cada secuencia?
+```{r}
+length(sars.seq)
+```
+
+2. ¿Cuál es la composición de nucleótidos de cada secuencia?
+```{r}
+count.sars <- count(sars.seq, 1)
+count.sars
+```
+
+3. ¿Cuál es el contenido de GC de cada virus?
+```{r}
+GC(sars.seq)
+```
+
+4. Crear una función para obtener la secuencia en complementaria e imprimirla por cada secuencia, ejemplo:
+-Virus original: agttgttagtctacgtggaccgacaagaac
+-Complementaria: tcaacaatcagatgcacctggctgttcttg
+
+```{r}
+comp(sars.seq, forceToLower = TRUE, ambiguous = FALSE)
+```
+
+**Wuhan-Hu-1**
+
+1. ¿Cuál es el tamaño de cada secuencia?
+```{r}
+length(wuhan.seq)
+```
+
+2. ¿Cuál es la composición de nucleótidos de cada secuencia?
+```{r}
+count.wuhan <- count(wuhan.seq, 1)
+count.wuhan
+```
+
+3. ¿Cuál es el contenido de GC de cada virus?
+```{r}
+GC(wuhan.seq)
+```
+
+4. Crear una función para obtener la secuencia en complementaria e imprimirla por cada secuencia, ejemplo:
+-Virus original: agttgttagtctacgtggaccgacaagaac
+-Complementaria: tcaacaatcagatgcacctggctgttcttg
+
+```{r}
+comp(wuhan.seq, forceToLower = TRUE, ambiguous = FALSE)
+```
+
+**MERS**
+
+1. ¿Cuál es el tamaño de cada secuencia?
+```{r}
+length(mers.seq)
+```
+
+2. ¿Cuál es la composición de nucleótidos de cada secuencia?
+```{r}
+count.mers <- count(mers.seq, 1)
+count.mers
+```
+
+3. ¿Cuál es el contenido de GC de cada virus?
+```{r}
+GC(mers.seq)
+```
+
+4. Crear una función para obtener la secuencia en complementaria e imprimirla por cada secuencia, ejemplo:
+-Virus original: agttgttagtctacgtggaccgacaagaac
+-Complementaria: tcaacaatcagatgcacctggctgttcttg
+
+```{r}
+comp(mers.seq, forceToLower = TRUE, ambiguous = FALSE)
+```
+
+
+
+
+**Dengue virus 1**
+
+1. ¿Cuál es el tamaño de cada secuencia?
+```{r}
+length(dengue.seq)
+```
+
+2. ¿Cuál es la composición de nucleótidos de cada secuencia?
+```{r}
+count.dengue <- count(dengue.seq, 1)
+count.dengue
+```
+
+3. ¿Cuál es el contenido de GC de cada virus?
+```{r}
+GC(dengue.seq)
+```
+
+4. Crear una función para obtener la secuencia en complementaria e imprimirla por cada secuencia, ejemplo:
+-Virus original: agttgttagtctacgtggaccgacaagaac
+-Complementaria: tcaacaatcagatgcacctggctgttcttg
+
+```{r}
+comp(dengue.seq, forceToLower = TRUE, ambiguous = FALSE)
+```
+
+5. Crear una gráfica de resumen para comparar la composición 
+
+```{r}
+compara <- function(seq1, seq2, seq3, seq4, seq5, title1, title2, title3, title4, title5){
+  count.seq1 <- count(seq1, 1)
+  count.seq2 <- count(seq2, 1)
+  count.seq3 <- count(seq3, 1)
+  count.seq4 <- count(seq4, 1)
+  count.seq5 <- count(seq5, 1)
+  par(mfrow=c(2,3))
+  barplot(count.seq1, col =c(1:4), main = paste(getName(seq2), title1, sep="\n"))
+  barplot(count.seq2, col =c(1:4), main = paste(getName(seq2), title2, sep="\n"))
+  barplot(count.seq3, col =c(1:4), main = paste(getName(seq2), title3, sep="\n"))
+  barplot(count.seq4, col =c(1:4), main = paste(getName(seq2), title4, sep="\n"))
+  barplot(count.seq5, col =c(1:4), main = paste(getName(seq1), title5, sep="\n"))
+}
+
+compara(zika.seq, sars.seq, wuhan.seq, mers.seq, dengue.seq, "zika", "sars", "wuhan", "mers","dengue")
+```
+
+
+**Influenza A H1N1**
+
+Busca las secuencias de H1N1 que apareció en México en 2009 y obtén todos los segmentos del virus
+
+
+```{r}
+# Leo el archivo fasta en un vector de caracteres
+influenza <- readLines("influenza.fasta")
+
+# Itero a lo largo del vector y extragio todas las líneas de encabezado con su descripción
+for(i in seq_along(influenza)){
+  if(startsWith(influenza[i], ">")){
+    cat(influenza[i], "\n")
+  }
+}
+```
+

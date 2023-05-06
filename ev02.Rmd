@@ -1,0 +1,191 @@
+---
+title: "Evidencia 2: Proyecto integrador"
+output: html_document
+author: "Pedro Luis Pérez Collado"
+date: "2023-05-04"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(repos = list(CRAN="http://cran.rstudio.com/"))
+```
+
+# Parte 2 - Código
+
+Realiza lo siguiente en un script de R y código:
+
+1. Analizar las secuencias de SARS-CoV-2 reportadas en los 20 países con más casos reportados.
+
+Al 10 de marzo del 2023, el Centro de Recursos de Coronavirus de la Universidad Johns Hopkins, reporta a los siguientes países como los 21 con más casos reportados en los 28 días previos(COVID-19 Map, n.d.), se incluyó República Checa porque no se encontraron secuencias genómicas del SARS-CoV-2 obtenidas en Ucrania.
+
+* Estados Unidos de América
+* Japón
+* Alemania
+* Rusia
+* Corea del Sur
+* Taiwán
+* Brazil
+* Austria
+* Italia
+* Reino Unido
+* Francia
+* México
+* Australia
+* Chile
+* Polonia
+* Canadá
+* Bélgica
+* Nueva Zelanda
+* España
+* Ucrania
+* República Checa
+
+
+```{r}
+library(BiocManager)
+library(ggmsa)
+library(phytools)
+library(ggpubr)
+library(ape)
+library(Biostrings)
+library(seqinr)
+library(adegenet)
+library(DECIPHER) 
+library(viridis)
+library(ggplot2)
+library(tidyverse)
+```
+
+Los identificadores de las variantes fueron obtenidos de NCBI Virus(SARS-CoV-2 Variants Overview, n.d.) y están de izquierda a derecha en el mismo orden que la lista de arriba consecutivo, una secuencia y variante por país, además de una secuencia distinta a las otras 20, en este caso de un Betacoronavirus, linaje B, SARS coronavirus Tor2, que incluso es un genoma de referencia dentro de la base de datos de NCBI.
+
+```{r}
+virus <- c(  "OQ783453", "BS007059", "MT358639", "OQ718963", "ON797343", 
+             "MW692795", "OQ921104", "OM640065", "OP288476", "OX490416",
+             "OQ894092", "OQ082919", "OQ692124", "OM146072", "OU596160",
+             "OM540761", "OL672836", "OP719790", "ON115270", "MT517420",
+             "NC_004718.3")
+```
+
+```{r}
+virus_sequences <- read.GenBank(virus)
+str(virus_sequences)
+```
+
+```{r}
+write.dna(virus_sequences, file = "virus_20_sequences.fasta", format = "fasta",
+          nbcol = 6, colsep = " ", colw = 10, append = FALSE)
+virus_seq_na <- readDNAStringSet("virus_20_sequences.fasta", format = "fasta")
+```
+
+2. Calcula la longitud de las secuencias que incluyas.
+
+```{r}
+width(virus_seq_na)
+```
+
+3. Crea una sola gráfica donde se comparen el número de bases de ADN que componen todas las variantes del virus. 
+
+```{r}
+str(virus_seq_na)
+```
+```{r}
+bases <- c("A","C","G","T")
+base_freq <- letterFrequency(virus_seq_na, bases, as.prob = FALSE)
+base_freq
+```
+```{r}
+counts_df <- data.frame(secuencia = virus, as.data.frame(base_freq))
+```
+
+
+
+```{r}
+
+counts_df_long <- tidyr::pivot_longer(counts_df, cols = c("A", "C", "G", "T"), names_to = "Nucleótido", values_to = "count")
+
+ggplot(counts_df_long, aes(x = secuencia, y = count, fill = Nucleótido)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Secuencia", y = "Cantidad de Bases", fill = "Nucleótido") +
+  ggtitle("Frecuencia de nucleótidos en cada una de las secuencias") +
+  theme(axis.text.x=element_text(angle=90,hjust=0.5,vjust=0.5))
+
+```
+
+Figura 1. Se puede observar una longitud similar en la cantidad total de nucléotidos así como una gran similitud en la distribución de sus nucleótidos, incluso a pesar de que se incluyó la secuencia de referencia NC_004718.3, la cual corresponde a la de un betacoronavirus pero SARS-CoV, una especie distinta de Coronavirus del SARS-CoV-2, también se encuentra a simple vista indistinguible con esta gráfica de los virus causantes del COVID-19, por lo tanto en una gráfica como esta vemos que no cambia en gran medida su distribución de nucleótidos, incluso cuando las secuencias corresponden a distintos países y variantes.
+
+
+
+
+
+4. Agrega un análisis jerárquico global obtenido de las secuencias que se seleccionaron para estudiar.
+
+```{r}
+virus_seq_na <- OrientNucleotides(virus_seq_na)
+```
+
+```{r}
+virus_align <- AlignSeqs(virus_seq_na)
+writeXStringSet(virus_align, file = "virus_20_aligned_seq.fasta")
+virus_aligned <- read.alignment("virus_20_aligned_seq.fasta", format = "fasta")
+matriz_distancias <- dist.alignment(virus_aligned, matrix = "similarity")
+matriz_distancias
+```
+
+
+```{r}
+temp <- as.data.frame(as.matrix(matriz_distancias))
+table.paint(temp, x = 1:ncol(temp), y = nrow(temp):1, 
+    row.labels = row.names(temp), col.labels = names(temp), 
+    clabel.row = 1, clabel.col = 1, csize = 0.6, clegend = 0.5)
+```
+
+Tabla 1. Esta ya nos permite darnos cuenta de la distancia importante que tiene el SARS-CoV de los SARS-CoV-2 utilizados para este reporte, es tanta la distancia que a simple vista los demás se observan con un color blanco sin una escala de grises, sin embargo analizando la matriz de distancias de arriba vemos que, aún cuando son cercanas las distancias entre todos los SARS-CoV-2, existen diferencias notables cuando se analizan los números, esto se podrá ver reflejado con la realización de un árbol filogenético.
+
+
+```{r}
+virus_filogenia <- nj(matriz_distancias)
+plotTree(virus_filogenia)
+```
+Figura 2. Con el árbol filogenético ya podemos observar de mejor forma las distancias que existen entre los distintos SARS-CoV-2, así como lo que ya sabíamos de la distancia considerable entre el SARS-CoV con los SARS-CoV-2, podemos ver que entre las secuencias con identificador OL672836 y OQ8940921 existe más cercania que entre las que tienen identificador OP288476 y MW682795. Al volver a comparar los datos es interesante notar que las primeras 2 secuencias mencionadas corresponden a una variante BA.1 de Bélgica y la segunda una variante BA.1.1.1 de Francia, sin embargo a pesar de esto no podemos aseverar que por haber una cercanía física entre los dos territorios se  puede explicar con este árbol, ya que no se puede conocer con certeza la realidad de cómo evolucionaron estos dos virus.
+
+5. Conclusión
+
+Como podemos observar, las variantes entre cada país no distan mucho a nivel de su secuencia genómica, podemos realzar esta observación al haber introducido una secuencia externa al grupo, como es la de otro Betacoronavirus, pero en esta ocasión la de un SARS-CoV, a pesar de que se encuentran dentro del mismo grupo, vemos como la distancia entre este y cualquier de los SARS-CoV-2 es mayor, que la distancia entre cualquiera de los SARS-CoV-2. Por lo que podemos ver que a pesar de que si existe una diferencia puntual de algunas mutaciones entre distintos países, estos no llegan a explicarse por diferencias poblacionales, ya que incluso entre el análisis de variantes de SARS-CoV-2 en un mismo país, podremos ver que estas diferencias puntuales existen, pero no explicadas por la localización geográfica, lo cual es esperable ya que las mutaciones son aleatorias, además de la globalización que ha permitido que este virus se hay expandido de forma rápida y haya llegado a prácticamente todo el planeta. Para una futura investigación sería interesante poder comparar estos resultados con los de otro compañero que haya decidido analizar 20 distintas secuencias de distintas especies hospederas, ver como cambia o no la distancia con respecto a este grupo.
+
+
+
+6. Referencias del script
+
+* COVID-19 Map. (n.d.). Johns Hopkins Coronavirus Resource Center. Retrieved May 4, 2023, from https://coronavirus.jhu.edu/map.html
+* SARS-CoV-2 Variants Overview. (n.d.). Retrieved May 4, 2023, from https://www.ncbi.nlm.nih.gov/activ
+
+
+```{r}
+citation("BiocManager")
+citation("ape")
+citation("ggplot2")
+citation("phytools")
+citation("ggpubr")
+citation("ggmsa")
+citation("seqinr")
+citation("adegenet")
+citation("ggtree")
+citation("DECIPHER")
+citation("viridis")
+citation("tidyverse")
+```
+
+7. Liga del video 
+
+<a href="https://youtu.be/TMz8l89zj_0><img src="Pedro.png" 
+alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+
+
+Referencias del video
+
+* Boni, M. F., Lemey, P., Jiang, X., Lam, T. T.-Y., Perry, B. W., Castoe, T. A., Rambaut, A., & Robertson, D. L. (2020). Evolutionary origins of the SARS-CoV-2 sarbecovirus lineage responsible for the COVID-19 pandemic. Nature Microbiology, 5(11), 1408–1417. https://doi.org/10.1038/s41564-020-0771-4
+* Crits-Christoph, Alex, Gangavarapu, Karthik, Pekar, Jonathan E., Moshiri, Niema, Singh, Reema, Levy, Joshua I., Goldstein, Stephen A., Suchard, Marc A., Popescu, Saskia, Robertson, David L., Lemey, Philippe, Wertheim, Joel O., Garry, Robert F., Rasmussen, Angela L., Andersen, Kristian G., Holmes, Edward C., Rambaut, Andrew, Worobey, Michael, & Débarre, Florence. (2023). Genetic evidence of susceptible wildlife in SARS-CoV-2 positive samples at the Huanan Wholesale Seafood Market, Wuhan: Analysis and interpretation of data released by the Chinese Center for Disease Control. Zenodo. https://doi.org/10.5281/ZENODO.7754298
+* Hale, V. L., Dennis, P. M., McBride, D. S., Nolting, J. M., Madden, C., Huey, D., Ehrlich, M., Grieser, J., Winston, J., Lombardi, D., Gibson, S., Saif, L., Killian, M. L., Lantz, K., Tell, R. M., Torchetti, M., Robbe-Austerman, S., Nelson, M. I., Faith, S. A., & Bowman, A. S. (2022). SARS-CoV-2 infection in free-ranging white-tailed deer. Nature, 602(7897), 481–486. https://doi.org/10.1038/s41586-021-04353-x
+* Schlottau, K., Rissmann, M., Graaf, A., Schön, J., Sehl, J., Wylezich, C., Höper, D., Mettenleiter, T. C., Balkema-Buschmann, A., Harder, T., Grund, C., Hoffmann, D., Breithaupt, A., & Beer, M. (2020). SARS-CoV-2 in fruit bats, ferrets, pigs, and chickens: An experimental transmission study. The Lancet Microbe, 1(5), e218–e225. https://doi.org/10.1016/S2666-5247(20)30089-6
+* Xiao, K., Zhai, J., Feng, Y., Zhou, N., Zhang, X., Zou, J.-J., Li, N., Guo, Y., Li, X., Shen, X., Zhang, Z., Shu, F., Huang, W., Li, Y., Zhang, Z., Chen, R.-A., Wu, Y.-J., Peng, S.-M., Huang, M., … Shen, Y. (2020). Isolation of SARS-CoV-2-related coronavirus from Malayan pangolins. Nature, 583(7815), 286–289. https://doi.org/10.1038/s41586-020-2313-x
+* Zhou, P., Yang, X.-L., Wang, X.-G., Hu, B., Zhang, L., Zhang, W., Si, H.-R., Zhu, Y., Li, B., Huang, C.-L., Chen, H.-D., Chen, J., Luo, Y., Guo, H., Jiang, R.-D., Liu, M.-Q., Chen, Y., Shen, X.-R., Wang, X., … Shi, Z.-L. (2020). A pneumonia outbreak associated with a new coronavirus of probable bat origin. Nature, 579(7798), 270–273. https://doi.org/10.1038/s41586-020-2012-7

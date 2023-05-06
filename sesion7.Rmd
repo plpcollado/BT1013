@@ -1,0 +1,19 @@
+---
+title: "sesion7"
+output: html_document
+date: "2023-04-25"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+seq.lista <- list(dengue = seq.dengue,
+                  zika = seq.zika)
+
+sapply(seq.lista, GC)
+sapply(seq.lista, length)
+sapply(seq.lista, sequinr::count, wordsize=1)
+
+```
